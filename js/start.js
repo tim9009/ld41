@@ -9,6 +9,9 @@ function start() {
 	Vroom.ctx.msImageSmoothingEnabled = imageSmoothingEnabled;
 	Vroom.ctx.imageSmoothingEnabled = imageSmoothingEnabled;
 
+	// Disable physics
+	Vroom.physicsEnabled = false;
+
 	// Vroooom vrooom!
 	Vroom.run();
 

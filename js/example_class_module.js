@@ -40,7 +40,7 @@ className.prototype.update = function(step) {
 };
 
 // Render function. Draws all elements related to this module to screen.
-moduleName.prototype.render = function(camera) {
+className.prototype.render = function(camera) {
 	Vroom.ctx.fillStyle = 'red';
 	Vroom.ctx.fillRect(this.pos.x, this.pos.y, this.dim.width, this.dim.height);
 };
