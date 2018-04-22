@@ -9,6 +9,14 @@ function Ship(npc, name, sprite, health, attackDice, defenseDice, jumpDice, repa
 		//this.sprite = new VroomSprite('sprites/' + sprite.name, sprite.animated, sprite.frameLength, this.dim.width, this.dim.height, sprite.frames, 0);
 	}
 
+	// Constants
+	this.dicePools = {};
+	this.dicePools.NONE = 'none';
+	this.dicePools.ATTACK = 'attack';
+	this.dicePools.DEFENSE = 'defense';
+	this.dicePools.JUMP = 'jump';
+	this.dicePools.REPAIR = 'repair';
+
 	// General
 	this.npc = npc;
 	this.name = name;
@@ -22,6 +30,7 @@ function Ship(npc, name, sprite, health, attackDice, defenseDice, jumpDice, repa
 	this.jumpDice = [];
 	this.repairDice = [];
 
+	this.activeDicePool = this.dicePools.NONE;
 	this.diceSpacing = 0;
 
 	// Number of dice
@@ -116,19 +125,19 @@ Ship.prototype.addRepairDie = function(dieType) {
 // Remove die from a dice pool
 Ship.prototype.removeDie = function(dicePoolName) {
 	switch(dicePoolName) {
-		case 'attack':
+		case this.dicePools.ATTACK:
 			this.attackDice.splice(this.attackDice.length - 1, 1);
 			break;
 
-		case 'defense':
+		case this.dicePools.DEFENSE:
 			this.defenseDice.splice(this.defenseDice.length - 1, 1);
 			break;
 
-		case 'jump':
+		case this.dicePools.JUMP:
 			this.jumpDice.splice(this.jumpDice.length - 1, 1);
 			break;
 
-		case 'repair':
+		case this.dicePools.REPAIR:
 			this.repairDice.splice(this.repairDice.length - 1, 1);
 			break;
 	}
@@ -137,30 +146,32 @@ Ship.prototype.removeDie = function(dicePoolName) {
 // Register all dice in a dice pool
 Ship.prototype.activateDicePool = function(dicePoolName) {
 	switch(dicePoolName) {
-		case 'attack':
+		case this.dicePools.ATTACK:
 			for(var attackDie in this.attackDice) {
 				Vroom.registerEntity(this.attackDice[attackDie]);
 			}
 			break;
 
-		case 'defense':
+		case this.dicePools.DEFENSE:
 			for(var defenseDie in this.defenseDice) {
 				Vroom.registerEntity(this.defenseDice[defenseDie]);
 			}
 			break;
 
-		case 'jump':
+		case this.dicePools.JUMP:
 			for(var jumpDie in this.jumpDice) {
 				Vroom.registerEntity(this.jumpDice[jumpDie]);
 			}
 			break;
 
-		case 'repair':
+		case this.dicePools.REPAIR:
 			for(var repairDie in this.repairDice) {
 				Vroom.registerEntity(this.repairDice[repairDie]);
 			}
 			break;
 	}
+
+	this.activeDicePool = dicePoolName;
 };
 
 // Deactivate all dice pools
@@ -170,30 +181,37 @@ Ship.prototype.deactivateAllDicePools = function() {
 	for(var die in allDice) {
 		Vroom.deregisterEntity(allDice[die]._id);
 	}
+
+	this.activeDicePool = this.dicePools.NONE;
 };
 
 // Roll dice in a die pool
 Ship.prototype.rollDice = function(dicePoolName) {
+	// Set selected dice pool to currently active dice pool if not specified
+	if(!dicePoolName) {
+		dicePoolName = this.activeDicePool;
+	}
+
 	switch(dicePoolName) {
-		case 'attack':
+		case this.dicePools.ATTACK:
 			for(var attackDieIndex = 0; attackDieIndex < this.attackDice.length; attackDieIndex++) {
 				this.attackDice[attackDieIndex].roll(attackDieIndex);
 			}
 			break;
 
-		case 'defense':
+		case this.dicePools.DEFENSE:
 			for(var defenseDieIndex = 0; defenseDieIndex < this.defenseDice.length; defenseDieIndex++) {
 				this.defenseDice[defenseDieIndex].roll(defenseDieIndex);
 			}
 			break;
 
-		case 'jump':
+		case this.dicePools.JUMP:
 			for(var jumpDieIndex = 0; jumpDieIndex < this.jumpDice.length; jumpDieIndex++) {
 				this.jumpDice[jumpDieIndex].roll(jumpDieIndex);
 			}
 			break;
 
-		case 'repair':
+		case this.dicePools.REPAIR:
 			for(var repairDieIndex = 0; repairDieIndex < this.repairDice.length; repairDieIndex++) {
 				this.repairDice[repairDieIndex].roll(repairDieIndex);
 			}
@@ -207,25 +225,25 @@ Ship.prototype.countDicePool = function(dicePoolName) {
 	var count = 0;
 
 	switch(dicePoolName) {
-		case 'attack':
+		case this.dicePools.ATTACK:
 			for(var attackDie in this.attackDice) {
 				count += this.attackDice[attackDie].result;
 			}
 			break;
 
-		case 'defense':
+		case this.dicePools.DEFENSE:
 			for(var defenseDie in this.defenseDice) {
 				count += this.defenseDice[defenseDie].result;
 			}
 			break;
 
-		case 'jump':
+		case this.dicePools.JUMP:
 			for(var jumpDie in this.jumpDice) {
 				count += this.jumpDice[jumpDie].result;
 			}
 			break;
 
-		case 'repair':
+		case this.dicePools.REPAIR:
 			for(var repairDie in this.repairDice) {
 				count += this.repairDice[repairDie].result;
 			}

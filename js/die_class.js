@@ -4,7 +4,7 @@ function Die(dieType) {
 	VroomEntity.call(this);
 	
 	this.dieType = dieType;
-	this.baseRollDuration = 250;
+	this.baseRollDuration = 500;
 	this.baseFaceChangeInterval = 50;
 
 	// Set correct attributes for type of die
@@ -38,8 +38,6 @@ function Die(dieType) {
 		x: 0,
 		y: 0,
 	};
-
-	// Load sprite for die type
 
 	this.init();
 }
