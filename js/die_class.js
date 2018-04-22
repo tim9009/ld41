@@ -51,8 +51,8 @@ Die.prototype.init = function() {
 	this.layer = 1;
 
 	this.dim = {
-		width: 100,
-		height: 100,
+		width: 80,
+		height: 80,
 	};
 
 	this.updateBounds();

@@ -6,5 +6,5 @@ Vroom.init({
 	},
 	fps: 60,
 	inputPreventDefault: [32, 17, 37, 38, 39, 40],
-	backgroundColor: '#fff',
+	backgroundColor: '#000',
 });

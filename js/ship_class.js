@@ -4,9 +4,8 @@ function Ship(npc, name, sprite, health, attackDice, defenseDice, jumpDice, repa
 	VroomEntity.call(this);
 
 	// Sprite
-	this.sprite = false;
 	if(sprite) {
-		//this.sprite = new VroomSprite('sprites/' + sprite.name, sprite.animated, sprite.frameLength, this.dim.width, this.dim.height, sprite.frames, 0);
+		this.sprite = new VroomSprite(sprite, false, 1, 400, 300, 0, 0);
 	}
 
 	// Constants
@@ -23,6 +22,7 @@ function Ship(npc, name, sprite, health, attackDice, defenseDice, jumpDice, repa
 
 	// Ship health points
 	this.health = health;
+	this.alive = true;
 
 	// Dice pools
 	this.attackDice = [];
@@ -31,6 +31,7 @@ function Ship(npc, name, sprite, health, attackDice, defenseDice, jumpDice, repa
 	this.repairDice = [];
 
 	this.activeDicePool = this.dicePools.NONE;
+	this.activeDicePoolRolling = false;
 	this.diceSpacing = 0;
 
 	// Number of dice
@@ -51,8 +52,8 @@ Ship.prototype.init = function() {
 	this.layer = 1;
 
 	this.dim = {
-		width: 100,
-		height: 60,
+		width: 400,
+		height: 300,
 	};
 
 	this.updateBounds();
@@ -63,7 +64,7 @@ Ship.prototype.init = function() {
 	};
 
 	this.diceAreaPos = {
-		x: 100,
+		x: 50,
 		y: Vroom.dim.height - 150,
 	};
 
@@ -87,7 +88,25 @@ Ship.prototype.init = function() {
 
 // Update function. Handles all logic for objects related to this class.
 Ship.prototype.update = function(step) {
+	// Check if any dice are rolling
+	this.activeDicePoolRolling = false;
+	var allDice = this.attackDice.concat(this.defenseDice, this.jumpDice, this.repairDice);
 
+	for(var die in allDice) {
+		if(allDice[die].rolling) {
+			this.activeDicePoolRolling = true;
+		}
+	}
+};
+
+// Add or remove health
+Ship.prototype.changeHealth = function(changeAmmount) {
+	this.health += changeAmmount;
+	// check for death
+	if(this.health <= 0) {
+		this.alive = false;
+		this.health = 0;
+	}
 };
 
 // Add new die to a attack dice pool
@@ -255,8 +274,7 @@ Ship.prototype.countDicePool = function(dicePoolName) {
 
 // Render function. Draws all elements related to this module to screen.
 Ship.prototype.render = function(camera) {
-	Vroom.ctx.fillStyle = 'red';
-	Vroom.ctx.fillRect(this.pos.x, this.pos.y, this.dim.width, this.dim.height);
+	this.sprite.render(this.pos, this.dim, this.dim);
 };
 
 // Destroy all parts of ship properly

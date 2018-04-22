@@ -1,7 +1,7 @@
-var player = new VroomEntity(false);
+var npc = new VroomEntity(false);
 
 // Init function for module. NOTE: default arguments are placeholders and need to be replaced or defined.
-player.init = function() {
+npc.init = function() {
 	this.layer = 1;
 
 	this.dim = {
@@ -13,17 +13,17 @@ player.init = function() {
 
 	// Position targets
 	this.encounterStartPos = {
-		x: -this.dim.width * 2,
+		x: Vroom.dim.width + (this.dim.width * 2),
 		y: (Vroom.dim.height / 2) - 180,
 	};
 
 	this.engagedPos = {
-		x: 200,
+		x: Vroom.dim.width - this.dim.width - 200,
 		y: (Vroom.dim.height / 2) - 180,
 	};
 
 	this.passivePos = {
-		x: 50,
+		x: Vroom.dim.width - this.dim.width - 50,
 		y: (Vroom.dim.height / 2) - 180,
 	};
 
@@ -47,16 +47,16 @@ player.init = function() {
 	this.ship = null;
 
 	// Register entity
-	Vroom.registerEntity(player);
+	Vroom.registerEntity(npc);
 };
 
 // Update function. Handles all logic for objects related to this module.
-player.update = function(step) {
+npc.update = function(step) {
 	// Update position
 	if(this.pos.x !== this.targetPos.x || this.pos.y !== this.targetPos.y) {
 		var lerpPercentage = 0.005;
 
-		if(gameSessionState.currentStep === steps.ATTACK) {
+		if(gameSessionState.currentStep === steps.DEFEND) {
 			lerpPercentage = 0.008;
 		}
 
@@ -83,10 +83,6 @@ player.update = function(step) {
 			// Load dice pool
 			this.ship.deactivateAllDicePools();
 			this.ship.activateDicePool('jump');
-			break;
-
-		case steps.ENCOUNTER:
-			this.ship.deactivateAllDicePools();
 			break;
 
 		// JUMP
@@ -119,25 +115,25 @@ player.update = function(step) {
 	}
 };
 
-player.generateShip = function() {
-	this.ship = new Ship(false, 'Rocinate', 'sprites/ship-1.png', 50, 2, 3, 4, 2);
+npc.generateShip = function() {
+	this.ship = new Ship(false, 'Rocinate', 'sprites/npc-1.png', 50, 2, 3, 4, 2);
 	this.ship.dim.width = this.dim.width;
 	this.ship.dim.height = this.dim.height;
 };
 
-player.registerShip = function() {
+npc.registerShip = function() {
 	Vroom.registerEntity(this.ship);
 };
 
-player.deregisterShip = function() {
+npc.deregisterShip = function() {
 	Vroom.deregisterEntity(this.ship);
 };
 
-player.deleteShip = function() {
+npc.deleteShip = function() {
 	this.ship.destroy();
 };
 
-player.onStepChange = function(lastStep, currentStep) {
+npc.onStepChange = function(lastStep, currentStep) {
 	switch(currentStep) {
 		case steps.START:
 			this.targetPos.x = this.centerPos.x;
@@ -154,13 +150,13 @@ player.onStepChange = function(lastStep, currentStep) {
 			break;
 
 		case steps.ATTACK:
-			this.targetPos.x = this.engagedPos.x;
-			this.targetPos.y = this.engagedPos.y;
+			this.targetPos.x = this.passivePos.x;
+			this.targetPos.y = this.passivePos.y;
 			break;
 
 		case steps.DEFEND:
-			this.targetPos.x = this.passivePos.x;
-			this.targetPos.y = this.passivePos.y;
+			this.targetPos.x = this.engagedPos.x;
+			this.targetPos.y = this.engagedPos.y;
 			break;
 
 		case steps.JUMP:
@@ -171,9 +167,9 @@ player.onStepChange = function(lastStep, currentStep) {
 };
 
 // Render function. Draws all elements related to this module to screen.
-player.render = function(camera) {
+npc.render = function(camera) {
 	
 };
 
 // Init call
-player.init();
+npc.init();
