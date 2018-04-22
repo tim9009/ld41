@@ -70,53 +70,10 @@ npc.update = function(step) {
 		this.ship.pos.x = this.pos.x;
 		this.ship.pos.y = this.pos.y;
 	}
-
-	switch(gameSessionState.currentStep) {
-		// START
-		case steps.START:
-			// Create new ship if not defined
-			if(!this.ship) {
-				this.generateShip();
-				this.registerShip();
-			}
-
-			// Load dice pool
-			this.ship.deactivateAllDicePools();
-			this.ship.activateDicePool('jump');
-			break;
-
-		// JUMP
-		case steps.JUMP:
-			// Load dice pool
-			this.ship.deactivateAllDicePools();
-			this.ship.activateDicePool('jump');
-			break;
-
-		// ATTACK
-		case steps.ATTACK:
-			// Load dice pool
-			this.ship.deactivateAllDicePools();
-			this.ship.activateDicePool('attack');
-			break;
-
-		// DEFENSE
-		case steps.DEFEND:
-			// Load dice pool
-			this.ship.deactivateAllDicePools();
-			this.ship.activateDicePool('defense');
-			break;
-
-		// REPAIR
-		case steps.REPAIR:
-			// Load dice pool
-			this.ship.deactivateAllDicePools();
-			this.ship.activateDicePool('repair');
-			break;
-	}
 };
 
 npc.generateShip = function() {
-	this.ship = new Ship(false, 'Rocinate', 'sprites/npc-1.png', 50, 2, 3, 4, 2);
+	this.ship = new Ship(true, 'Rocinate', 'sprites/npc-1.png', 50, 2, 3, 4, 2);
 	this.ship.dim.width = this.dim.width;
 	this.ship.dim.height = this.dim.height;
 };
@@ -126,11 +83,13 @@ npc.registerShip = function() {
 };
 
 npc.deregisterShip = function() {
-	Vroom.deregisterEntity(this.ship);
+	Vroom.deregisterEntity(this.ship._id);
 };
 
 npc.deleteShip = function() {
 	this.ship.destroy();
+	Vroom.deleteEntity(this.ship._id);
+	this.ship = null;
 };
 
 npc.onStepChange = function(lastStep, currentStep) {
@@ -143,6 +102,15 @@ npc.onStepChange = function(lastStep, currentStep) {
 			break;
 
 		case steps.ENCOUNTER:
+			// Create new ship if not defined
+			if(!this.ship) {
+				this.generateShip();
+				this.registerShip();
+			}
+
+			// Load dice pool
+			this.ship.deactivateAllDicePools();
+
 			this.targetPos.x = this.passivePos.x;
 			this.targetPos.y = this.passivePos.y;
 			this.pos.x = this.encounterStartPos.x;
@@ -150,18 +118,37 @@ npc.onStepChange = function(lastStep, currentStep) {
 			break;
 
 		case steps.ATTACK:
+			// Load dice pool
+			this.ship.deactivateAllDicePools();
+			this.ship.activateDicePool('defense');
+
 			this.targetPos.x = this.passivePos.x;
 			this.targetPos.y = this.passivePos.y;
 			break;
 
 		case steps.DEFEND:
+			// Load dice pool
+			this.ship.deactivateAllDicePools();
+			this.ship.activateDicePool('attack');
+
 			this.targetPos.x = this.engagedPos.x;
 			this.targetPos.y = this.engagedPos.y;
 			break;
 
 		case steps.JUMP:
+			// Load dice pool
+			this.deleteShip();
+
 			this.targetPos.x = this.centerPos.x;
 			this.targetPos.y = this.centerPos.y;
+			break;
+
+		case steps.REPAIR:
+			// Load dice pool
+			this.ship.deactivateAllDicePools();
+
+			this.targetPos.x = this.passivePos.x;
+			this.targetPos.y = this.passivePos.y;
 			break;
 	}
 };

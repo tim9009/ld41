@@ -16,6 +16,7 @@ function start() {
 	Vroom.run();
 
 	gameState.gameStarted = true;
+	gameSessionState.currentStep = steps.START;
 
 	// Set focus on window to make the game work when played in an iFrame
 	window.focus();

@@ -22,7 +22,7 @@ steps.LOSE = 'lose';
 var gameSessionState = {
 	started: false,
 	lastStep: steps.NONE,
-	currentStep: steps.START,
+	currentStep: steps.NONE,
 	travelDistance: 0,
 	travelDistanceTotal: 100,
 };

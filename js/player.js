@@ -70,53 +70,6 @@ player.update = function(step) {
 		this.ship.pos.x = this.pos.x;
 		this.ship.pos.y = this.pos.y;
 	}
-
-	switch(gameSessionState.currentStep) {
-		// START
-		case steps.START:
-			// Create new ship if not defined
-			if(!this.ship) {
-				this.generateShip();
-				this.registerShip();
-			}
-
-			// Load dice pool
-			this.ship.deactivateAllDicePools();
-			this.ship.activateDicePool('jump');
-			break;
-
-		case steps.ENCOUNTER:
-			this.ship.deactivateAllDicePools();
-			break;
-
-		// JUMP
-		case steps.JUMP:
-			// Load dice pool
-			this.ship.deactivateAllDicePools();
-			this.ship.activateDicePool('jump');
-			break;
-
-		// ATTACK
-		case steps.ATTACK:
-			// Load dice pool
-			this.ship.deactivateAllDicePools();
-			this.ship.activateDicePool('attack');
-			break;
-
-		// DEFENSE
-		case steps.DEFEND:
-			// Load dice pool
-			this.ship.deactivateAllDicePools();
-			this.ship.activateDicePool('defense');
-			break;
-
-		// REPAIR
-		case steps.REPAIR:
-			// Load dice pool
-			this.ship.deactivateAllDicePools();
-			this.ship.activateDicePool('repair');
-			break;
-	}
 };
 
 player.generateShip = function() {
@@ -140,6 +93,16 @@ player.deleteShip = function() {
 player.onStepChange = function(lastStep, currentStep) {
 	switch(currentStep) {
 		case steps.START:
+			// Create new ship if not defined
+			if(!this.ship) {
+				this.generateShip();
+				this.registerShip();
+			}
+
+			// Load dice pool
+			this.ship.deactivateAllDicePools();
+			this.ship.activateDicePool('jump');
+
 			this.targetPos.x = this.centerPos.x;
 			this.targetPos.y = this.centerPos.y;
 			this.pos.x = this.centerPos.x;
@@ -147,6 +110,8 @@ player.onStepChange = function(lastStep, currentStep) {
 			break;
 
 		case steps.ENCOUNTER:
+			this.ship.deactivateAllDicePools();
+
 			this.targetPos.x = this.passivePos.x;
 			this.targetPos.y = this.passivePos.y;
 			this.pos.x = this.encounterStartPos.x;
@@ -154,18 +119,39 @@ player.onStepChange = function(lastStep, currentStep) {
 			break;
 
 		case steps.ATTACK:
+			// Load dice pool
+			this.ship.deactivateAllDicePools();
+			this.ship.activateDicePool('attack');
+
 			this.targetPos.x = this.engagedPos.x;
 			this.targetPos.y = this.engagedPos.y;
 			break;
 
 		case steps.DEFEND:
+			// Load dice pool
+			this.ship.deactivateAllDicePools();
+			this.ship.activateDicePool('defense');
+
 			this.targetPos.x = this.passivePos.x;
 			this.targetPos.y = this.passivePos.y;
 			break;
 
 		case steps.JUMP:
+			// Load dice pool
+			this.ship.deactivateAllDicePools();
+			this.ship.activateDicePool('jump');
+
 			this.targetPos.x = this.centerPos.x;
 			this.targetPos.y = this.centerPos.y;
+			break;
+
+		case steps.REPAIR:
+			// Load dice pool
+			this.ship.deactivateAllDicePools();
+			this.ship.activateDicePool('repair');
+
+			this.targetPos.x = this.passivePos.x;
+			this.targetPos.y = this.passivePos.y;
 			break;
 	}
 };

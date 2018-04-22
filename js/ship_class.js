@@ -63,10 +63,8 @@ Ship.prototype.init = function() {
 		y: 0,
 	};
 
-	this.diceAreaPos = {
-		x: 50,
-		y: Vroom.dim.height - 150,
-	};
+	// Sett dice area position
+	this.updateDiceAreaPos();
 
 	// Initiate dice pools
 	for(var i = 0; i < this.numberOfAttackDice; i++) {
@@ -95,6 +93,7 @@ Ship.prototype.update = function(step) {
 	for(var die in allDice) {
 		if(allDice[die].rolling) {
 			this.activeDicePoolRolling = true;
+			break;
 		}
 	}
 };
@@ -106,6 +105,66 @@ Ship.prototype.changeHealth = function(changeAmmount) {
 	if(this.health <= 0) {
 		this.alive = false;
 		this.health = 0;
+	}
+};
+
+Ship.prototype.updateDiceAreaPos = function() {
+	var diceAreaMargin = 50;
+	var diceInActivePool = 0;
+	var diceWidth = 0;
+
+	switch(this.activeDicePool) {
+		case this.dicePools.ATTACK:
+			diceInActivePool = this.attackDice.length;
+			diceWidth = this.attackDice[0].dim.width;
+			break;
+
+		case this.dicePools.DEFENSE:
+			diceInActivePool = this.defenseDice.length;
+			diceWidth = this.defenseDice[0].dim.width;
+			break;
+	}
+
+	console.log(diceInActivePool, diceWidth, diceInActivePool * diceWidth);
+
+	if(this.npc) {
+		console.log('Im an NPC yo!');
+		console.log(Vroom.dim.width - (diceInActivePool * diceWidth) - diceAreaMargin);
+		this.diceAreaPos = {
+			x: Vroom.dim.width - (diceInActivePool * diceWidth) - diceAreaMargin,
+			y: Vroom.dim.height - 150,
+		};
+	} else {
+		this.diceAreaPos = {
+			x: diceAreaMargin,
+			y: Vroom.dim.height - 150,
+		};
+	}
+
+	console.log('Updating dice');
+
+	// Update attack dice positions
+	for(var i = 0; i < this.attackDice.length; i++) {
+		this.attackDice[i].pos.x = this.diceAreaPos.x + ((this.diceSpacing + this.attackDice[i].dim.width) * i);
+		this.attackDice[i].pos.y = this.diceAreaPos.y;
+	}
+
+	// Update defense dice positions
+	for(var i = 0; i < this.defenseDice.length; i++) {
+		this.defenseDice[i].pos.x = this.diceAreaPos.x + ((this.diceSpacing + this.defenseDice[i].dim.width) * i);
+		this.defenseDice[i].pos.y = this.diceAreaPos.y;
+	}
+
+	// Update jump dice positions
+	for(var i = 0; i < this.jumpDice.length; i++) {
+		this.jumpDice[i].pos.x = this.diceAreaPos.x + ((this.diceSpacing + this.jumpDice[i].dim.width) * i);
+		this.jumpDice[i].pos.y = this.diceAreaPos.y;
+	}
+
+	// Update repair dice positions
+	for(var i = 0; i < this.repairDice.length; i++) {
+		this.repairDice[i].pos.x = this.diceAreaPos.x + ((this.diceSpacing + this.repairDice[i].dim.width) * i);
+		this.repairDice[i].pos.y = this.diceAreaPos.y;
 	}
 };
 
@@ -191,6 +250,7 @@ Ship.prototype.activateDicePool = function(dicePoolName) {
 	}
 
 	this.activeDicePool = dicePoolName;
+	this.updateDiceAreaPos();
 };
 
 // Deactivate all dice pools
