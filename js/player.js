@@ -75,6 +75,11 @@ player.update = function(step) {
 	}
 };
 
+player.reset = function() {
+	this.xp = 0;
+	this.deleteShip();
+};
+
 player.generateShip = function() {
 	this.ship = new Ship(false, 'Rocinate', 'sprites/ship-2.png', 50, 2, 3, 1, 2);
 	this.ship.dim.width = this.dim.width;

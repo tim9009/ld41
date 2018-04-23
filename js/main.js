@@ -43,8 +43,8 @@ initGameSessionState();
 
 function restart() {
 	initGameSessionState();
-	player.deleteShip();
-	npc.deleteShip();
+	player.reset();
+	npc.reset();
 	activateStep(steps.START, 0);
 }
 

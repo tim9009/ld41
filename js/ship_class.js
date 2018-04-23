@@ -278,6 +278,7 @@ Ship.prototype.deactivateAllDicePools = function() {
 	var allDice = this.attackDice.concat(this.defenseDice, this.jumpDice, this.repairDice);
 
 	for(var die in allDice) {
+		allDice[die].rolling = false;
 		Vroom.deregisterEntity(allDice[die]._id);
 	}
 

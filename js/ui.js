@@ -35,7 +35,7 @@ rollButton.update = function(step) {
 
 	//Handle being clicked
 	if(Vroom.isEntityClicked(this._id, false)) {
-		if(!player.ship.activeDicePoolRolling && !gameSessionState.diceRolledForStep) {
+		if(!gameSessionState.stepChangeInProgress && !player.ship.activeDicePoolRolling && !gameSessionState.diceRolledForStep) {
 			gameSessionState.playerDiceResult = player.ship.rollDice();
 			if(npc.ship) {
 				gameSessionState.npcDiceResult = npc.ship.rollDice();

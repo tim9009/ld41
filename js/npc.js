@@ -72,6 +72,10 @@ npc.update = function(step) {
 	}
 };
 
+player.reset = function() {
+	this.deleteShip();
+};
+
 npc.generateShip = function() {
 	this.ship = new Ship(true, 'Rocinate', 'sprites/npc-2.png', 20, 2, 2, 1, 1);
 	this.ship.dim.width = this.dim.width;
