@@ -5,8 +5,8 @@ entityName.init = function(physicsEnabled, physicsEntityType, physicsCollisionTy
 	this.layer = 1;
 
 	this.dim = {
-		x: 0,
-		y: 0,
+		width: 0,
+		height: 0,
 	};
 
 	this.updateBounds();

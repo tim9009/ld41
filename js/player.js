@@ -46,6 +46,9 @@ player.init = function() {
 	// Ship
 	this.ship = null;
 
+	// Xp
+	this.xp = 0;
+
 	// Register entity
 	Vroom.registerEntity(player);
 };
@@ -73,7 +76,7 @@ player.update = function(step) {
 };
 
 player.generateShip = function() {
-	this.ship = new Ship(false, 'Rocinate', 'sprites/ship-1.png', 50, 2, 3, 4, 2);
+	this.ship = new Ship(false, 'Rocinate', 'sprites/ship-2.png', 50, 2, 3, 1, 2);
 	this.ship.dim.width = this.dim.width;
 	this.ship.dim.height = this.dim.height;
 };
@@ -87,7 +90,11 @@ player.deregisterShip = function() {
 };
 
 player.deleteShip = function() {
-	this.ship.destroy();
+	if(this.ship) {
+		this.ship.destroy();
+		Vroom.deleteEntity(this.ship._id);
+		this.ship = null;
+	}
 };
 
 player.onStepChange = function(lastStep, currentStep) {
@@ -136,6 +143,11 @@ player.onStepChange = function(lastStep, currentStep) {
 			this.targetPos.y = this.passivePos.y;
 			break;
 
+		case steps.STORE:
+			// Load dice pool
+			this.ship.deactivateAllDicePools();
+			break;
+
 		case steps.JUMP:
 			// Load dice pool
 			this.ship.deactivateAllDicePools();
@@ -150,8 +162,8 @@ player.onStepChange = function(lastStep, currentStep) {
 			this.ship.deactivateAllDicePools();
 			this.ship.activateDicePool('repair');
 
-			this.targetPos.x = this.passivePos.x;
-			this.targetPos.y = this.passivePos.y;
+			this.targetPos.x = this.centerPos.x;
+			this.targetPos.y = this.centerPos.y;
 			break;
 	}
 };

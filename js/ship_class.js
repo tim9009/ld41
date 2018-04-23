@@ -21,6 +21,7 @@ function Ship(npc, name, sprite, health, attackDice, defenseDice, jumpDice, repa
 	this.name = name;
 
 	// Ship health points
+	this.healthLimit = health;
 	this.health = health;
 	this.alive = true;
 
@@ -68,7 +69,7 @@ Ship.prototype.init = function() {
 
 	// Initiate dice pools
 	for(var i = 0; i < this.numberOfAttackDice; i++) {
-		this.addAttackDie('d6');
+		this.addAttackDie('d8');
 	}
 
 	for(var i = 0; i < this.numberOfDefenseDice; i++) {
@@ -76,11 +77,11 @@ Ship.prototype.init = function() {
 	}
 
 	for(var i = 0; i < this.numberOfJumpDice; i++) {
-		this.addJumpDie('d8');
+		this.addJumpDie('d6');
 	}
 
 	for(var i = 0; i < this.numberOfRepairDice; i++) {
-		this.addRepairDie('d6');
+		this.addRepairDie('d4');
 	}
 };
 
@@ -105,7 +106,32 @@ Ship.prototype.changeHealth = function(changeAmmount) {
 	if(this.health <= 0) {
 		this.alive = false;
 		this.health = 0;
+
+		if(this.npc) {
+			gameSessionState.npcDead = true;
+		}
 	}
+
+	// Limit health to max
+	if(this.health > this.healthLimit) {
+		this.health = this.healthLimit;
+	}
+};
+
+Ship.prototype.applyDamage = function(damage) {
+	if(damage > 0) {
+		console.log('HIT! Damage: ' + damage);
+		this.changeHealth(-damage);
+		popupMessage.display(damage + ' DAMAGE');
+	} else {
+		console.log('MISS!');
+		popupMessage.display('MISS!');
+	}
+};
+
+Ship.prototype.repair = function(repairAmmount) {
+	this.changeHealth(repairAmmount);
+	popupMessage.display(repairAmmount + ' REPAIRED');
 };
 
 Ship.prototype.updateDiceAreaPos = function() {
@@ -125,11 +151,7 @@ Ship.prototype.updateDiceAreaPos = function() {
 			break;
 	}
 
-	console.log(diceInActivePool, diceWidth, diceInActivePool * diceWidth);
-
 	if(this.npc) {
-		console.log('Im an NPC yo!');
-		console.log(Vroom.dim.width - (diceInActivePool * diceWidth) - diceAreaMargin);
 		this.diceAreaPos = {
 			x: Vroom.dim.width - (diceInActivePool * diceWidth) - diceAreaMargin,
 			y: Vroom.dim.height - 150,
@@ -140,8 +162,6 @@ Ship.prototype.updateDiceAreaPos = function() {
 			y: Vroom.dim.height - 150,
 		};
 	}
-
-	console.log('Updating dice');
 
 	// Update attack dice positions
 	for(var i = 0; i < this.attackDice.length; i++) {
@@ -334,7 +354,16 @@ Ship.prototype.countDicePool = function(dicePoolName) {
 
 // Render function. Draws all elements related to this module to screen.
 Ship.prototype.render = function(camera) {
-	this.sprite.render(this.pos, this.dim, this.dim);
+	if(this.alive) {
+		// Render sprite
+		this.sprite.render(this.pos, this.dim, this.dim);
+
+		// Render stats
+		Vroom.ctx.fillStyle = '#fff';
+		Vroom.ctx.textAlign = "center";
+		Vroom.ctx.font = "20px helvetica";
+		Vroom.ctx.fillText('Hitpoints: ' + this.health, this.pos.x + 140, this.pos.y);
+	}
 };
 
 // Destroy all parts of ship properly

@@ -101,7 +101,6 @@ Die.prototype.roll = function(dieNumber) {
 	dieNumber = dieNumber || 1;
 	// Calculate roll duration
 	this.rollDuration = (this.baseRollDuration * dieNumber) + Math.pow(dieNumber, 3.5);
-	console.log('Extra: ', Math.pow(dieNumber, 3.5));
 
 	// Set rolling state
 	this.rolling = true;
@@ -133,26 +132,3 @@ Die.prototype.render = function(camera) {
 	Vroom.ctx.font = "40px helvetica";
 	Vroom.ctx.fillText(this.currentFaceShowing, posWithShake.x + this.halfDim.width, posWithShake.y + this.halfDim.height + 12);
 };
-
-
-// var die = new Die('d4'); Vroom.registerEntity(die);
-// var die2 = new Die('d6'); Vroom.registerEntity(die2);
-// die2.pos.x += 100;
-
-// var die3 = new Die('d8'); Vroom.registerEntity(die3);
-// die3.pos.x += 200;
-
-// var die4 = new Die('d6'); Vroom.registerEntity(die4);
-// die4.pos.x += 300;
-
-// var die5 = new Die('d6'); Vroom.registerEntity(die5);
-// die5.pos.x += 400;
-
-// var die6 = new Die('d6'); Vroom.registerEntity(die6);
-// die6.pos.x += 500;
-
-// var die7 = new Die('d6'); Vroom.registerEntity(die7);
-// die7.pos.x += 600;
-
-// var die8 = new Die('d6'); Vroom.registerEntity(die8);
-// die8.pos.x += 700;

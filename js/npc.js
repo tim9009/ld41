@@ -73,7 +73,7 @@ npc.update = function(step) {
 };
 
 npc.generateShip = function() {
-	this.ship = new Ship(true, 'Rocinate', 'sprites/npc-1.png', 50, 2, 3, 4, 2);
+	this.ship = new Ship(true, 'Rocinate', 'sprites/npc-2.png', 20, 2, 2, 1, 1);
 	this.ship.dim.width = this.dim.width;
 	this.ship.dim.height = this.dim.height;
 };
@@ -87,9 +87,11 @@ npc.deregisterShip = function() {
 };
 
 npc.deleteShip = function() {
-	this.ship.destroy();
-	Vroom.deleteEntity(this.ship._id);
-	this.ship = null;
+	if(this.ship) {
+		this.ship.destroy();
+		Vroom.deleteEntity(this.ship._id);
+		this.ship = null;
+	}
 };
 
 npc.onStepChange = function(lastStep, currentStep) {
@@ -135,20 +137,12 @@ npc.onStepChange = function(lastStep, currentStep) {
 			this.targetPos.y = this.engagedPos.y;
 			break;
 
+		case steps.REPAIR:
 		case steps.JUMP:
-			// Load dice pool
 			this.deleteShip();
 
 			this.targetPos.x = this.centerPos.x;
 			this.targetPos.y = this.centerPos.y;
-			break;
-
-		case steps.REPAIR:
-			// Load dice pool
-			this.ship.deactivateAllDicePools();
-
-			this.targetPos.x = this.passivePos.x;
-			this.targetPos.y = this.passivePos.y;
 			break;
 	}
 };
