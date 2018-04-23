@@ -72,7 +72,7 @@ npc.update = function(step) {
 	}
 };
 
-player.reset = function() {
+npc.reset = function() {
 	this.deleteShip();
 };
 
